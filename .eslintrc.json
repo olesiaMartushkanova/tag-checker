@@ -1,14 +1,62 @@
 {
-  "plugins": ["jest"],
+  "plugins": ["jest", "@typescript-eslint"],
   "extends": [
-    "./.eslintrc.general.js",
     "plugin:jest/recommended",
-    "plugin:jest/style"
+    "plugin:jest/style",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
+    "plugin:@typescript-eslint/recommended"
   ],
+  "parser": "@typescript-eslint/parser",
   "env": {
     "jest": true
   },
   "rules": {
+    "rules": {
+      "import/no-named-as-default": 0,
+      "linebreak-style": ["error", "unix"],
+      "no-console": "error",
+      "no-unused-expressions": "error",
+      "no-unused-labels": "error",
+      "no-var": "error",
+      "react/prop-types": 0,
+      "jsx-quotes": ["error", "prefer-single"],
+      "semi": ["error", "always"],
+      "max-len": [2, { "code": 120, "ignoreUrls": true }],
+      "no-multiple-empty-lines": "off",
+      "comma-dangle": [
+        "error",
+        {
+          "arrays": "always-multiline",
+          "objects": "always-multiline",
+          "imports": "always-multiline",
+          "exports": "always-multiline",
+          "functions": "always-multiline"
+        }
+      ]
+    },
+    "overrides": [
+      // Rules for TypeScript files
+      {
+        "files": ["*.ts", "*.tsx"],
+        "rules": {
+          "@typescript-eslint/ban-types": ["off"],
+          "@typescript-eslint/explicit-module-boundary-types": ["off"],
+          "@typescript-eslint/no-empty-interface": ["off"],
+          "@typescript-eslint/no-explicit-any": ["warn"],
+          "@typescript-eslint/no-var-requires": ["off"],
+          "@typescript-eslint/quotes": [
+            "error",
+            "single",
+            {
+              "allowTemplateLiterals": true,
+              "avoidEscape": true
+            }
+          ]
+        }
+      }
+    ],
+    // Tests specific
     "jest/no-commented-out-tests": "error",
     "jest/no-deprecated-functions": "error",
     "jest/no-duplicate-hooks": "off",
