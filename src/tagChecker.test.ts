@@ -1,8 +1,8 @@
-import { check } from './tagChecker';
+import { tagChecker } from './tagChecker';
 
 describe('tagChecker', () => {
   it('wrong mixed tag', () => {
-    const actual = check('<A></A><B></B>');
+    const actual = tagChecker('<A></A><B></B>');
     expect(actual).toBe(false);
   });
 });
