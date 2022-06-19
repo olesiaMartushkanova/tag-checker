@@ -2,15 +2,15 @@ import {
   cleanTerminatedTags,
   isClosingTag,
   isSameTag,
-  splitTagsInHalf,
+  splitTagsArrInHalf,
   stripTag,
 } from './utils';
 
 export const tagChecker = (html: string) => {
-  const messedUpTags = cleanTerminatedTags(html);
+  const mixedTags = cleanTerminatedTags(html);
 
-  if (messedUpTags) {
-    const { leftTags, rightTags } = splitTagsInHalf(messedUpTags);
+  if (mixedTags) {
+    const { leftTags, rightTags } = splitTagsArrInHalf(mixedTags);
 
     for (let i = 0; i < Math.max(leftTags.length, rightTags.length); i++) {
       const leftTag = leftTags?.[i];

@@ -5,7 +5,7 @@ export const isSameTag = (leftTag: string, rightTag: string) =>
 
 export const isClosingTag = (tag: string) => tag.includes('/');
 
-export const splitTagsInHalf = (tags: string[]) => {
+export const splitTagsArrInHalf = (tags: string[]) => {
   const closingTagCount = tags.filter(isClosingTag).length;
   const middle = tags.length / 2;
   const half =
@@ -22,7 +22,6 @@ export const cleanTerminatedTags = (html: string) => {
 
   if (tags) {
     let tagsStr = tags.join();
-
     const openCloseTagPair = tagsStr.match(/(<[A-Z]{1}>),(<\/[A-Z]{1}>)/g);
 
     openCloseTagPair?.forEach((tagsPair) => {

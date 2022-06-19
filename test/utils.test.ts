@@ -2,7 +2,7 @@ import {
   isClosingTag,
   isSameTag,
   stripTag,
-  splitTagsInHalf,
+  splitTagsArrInHalf,
   cleanTerminatedTags,
 } from '../src/utils';
 
@@ -39,12 +39,12 @@ describe.each([
   });
 });
 
-describe('splitTagsInHalf', () => {
-  it('splits tags in half correctly', () => {
+describe('splitTagsArrInHalf', () => {
+  it('splits array of tags in half correctly', () => {
     const tags = ['<A>', '</A>', '<B>', '</B>'];
     const expectedRightTags = ['<B>', '</B>'];
     const expectedLeftTags = ['<A>', '</A>'];
-    const { rightTags, leftTags } = splitTagsInHalf(tags);
+    const { rightTags, leftTags } = splitTagsArrInHalf(tags);
 
     expect(rightTags).toEqual(expect.arrayContaining(expectedRightTags));
     expect(leftTags).toEqual(expect.arrayContaining(expectedLeftTags));
