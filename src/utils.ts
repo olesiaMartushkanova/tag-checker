@@ -1,31 +1,35 @@
-import { TAG_REGEX } from './regex';
+export const stripTag = (tag: string) => tag?.replaceAll(/[<>\\/]/g, '');
 
-export const validateTagPairMatchMistake = (html: string) => {
-  const result = html.match(TAG_REGEX) as string[];
-  const middleOfResult = Math.floor(result?.length || 0) / 2;
+export const isSameTag = (leftTag: string, rightTag: string) =>
+  stripTag(leftTag) === stripTag(rightTag);
 
-  const tagNames = getTagNames(result);
+export const isClosingTag = (tag: string) => tag && tag.includes('/');
 
-  for (let i = 1; i < middleOfResult; i++) {
-    const firstMiddleTagIndex = middleOfResult - i;
+export const splitTagsInHalf = (tags: string[]) => {
+  const closingTagCount = tags.filter(isClosingTag).length;
+  const middle = tags.length / 2;
+  const half =
+    closingTagCount > middle ? Math.floor(middle) : Math.ceil(middle);
+  const leftTags = tags.slice(0, half).reverse();
+  const rightTags = tags.slice(half);
 
-    const isNestedTagPairCorrect =
-      tagNames?.[firstMiddleTagIndex] === tagNames?.[middleOfResult];
-
-    if (!isNestedTagPairCorrect) {
-      console.log(
-        `Expected </${tagNames?.[firstMiddleTagIndex]}> found </${tagNames[middleOfResult]}>`,
-      );
-      return;
-    } else {
-      console.log(`Expected </${tagNames?.[0]}> found #`);
-      return;
-    }
-  }
+  return { leftTags, rightTags };
 };
 
-const getTagNames = (tags: string[]) => {
-  const reg = new RegExp('(?<tagName>[A-Z])');
+export const cleanTerminatedTags = (html: string) => {
+  const tagsRegexp = /<\/??[A-Z]{1}>/g;
+  const tags = html.match(tagsRegexp);
 
-  return tags.map((tag) => tag.match(reg)?.groups?.tagName);
+  if (tags) {
+    let tagsStr = tags.join();
+    const openCloseTagPair = tagsStr.match(/(<[A-Z]{1}>),(<\/[A-Z]{1}>)/g);
+    openCloseTagPair?.forEach((tagsPair) => {
+      const tagPairArr = tagsPair.split(',');
+      if (isSameTag(tagPairArr?.[0], tagPairArr?.[1])) {
+        tagsStr = tagsStr.replace(tagsPair, '');
+      }
+    });
+    return tagsStr.match(tagsRegexp) || [];
+  }
+  return null;
 };

@@ -1,63 +1,67 @@
 import {
-  CORRECT_HTML_TAG_REGEX,
-  MISSING_OPENING_TAG_REGEX,
-  CONTAINS_TAGS_REGEX,
-  MISSING_CLOSING_TAG_REGEX,
-} from './regex';
-import { validateTagPairMatchMistake } from './utils';
+  cleanTerminatedTags,
+  isClosingTag,
+  isSameTag,
+  splitTagsInHalf,
+  stripTag,
+} from './utils';
 
 export const tagChecker = (html: string) => {
-  const matchCorrect = html.match(CORRECT_HTML_TAG_REGEX);
-  const matchesMissingOpeningTag = html.match(MISSING_OPENING_TAG_REGEX);
-  const matchesMissingClosingTag = html.match(MISSING_CLOSING_TAG_REGEX);
-  const nestedBetweenTags = matchCorrect?.groups?.children;
+  const messedUpTags = cleanTerminatedTags(html);
 
-  if (matchCorrect) {
-    const isTagPairWrong =
-      matchCorrect?.groups?.openingTag !== matchCorrect?.groups?.closingTag;
-    const isNoTags =
-      !nestedBetweenTags ||
-      !CONTAINS_TAGS_REGEX.test(nestedBetweenTags as string);
+  if (messedUpTags) {
+    const { leftTags, rightTags } = splitTagsInHalf(messedUpTags);
 
-    if (isTagPairWrong) {
-      validateTagPairMatchMistake(html);
+    for (let i = 0; i < Math.max(leftTags.length, rightTags.length); i++) {
+      const leftTag = leftTags?.[i];
+      const rightTag = rightTags?.[i];
+
+      if (!leftTag && rightTag) {
+        console.log(`Expected # found ${rightTag}`);
+        return;
+      }
+
+      if (leftTag && !rightTag) {
+        console.log(`Expected </${stripTag(leftTag)}> found #`);
+        return;
+      }
+
+      if (isSameTag(leftTag, rightTag) && isClosingTag(leftTag)) {
+        console.log(`Expected <${stripTag(leftTag)}> found ${leftTag}`);
+        return;
+      }
+
+      if (isSameTag(leftTag, rightTag) && !isClosingTag(rightTag)) {
+        console.log(`Expected </${stripTag(rightTag)}> found ${rightTag}`);
+        return;
+      }
+
+      if (!isSameTag(leftTag, rightTag)) {
+        console.log(`Expected </${stripTag(leftTag)}> found ${rightTag}`);
+        return;
+      }
     }
-
-    if (!isTagPairWrong && isNoTags) {
-      console.log('Correctly tagged paragraph');
-      return;
-    }
-
-    if (!isTagPairWrong && !isNoTags && nestedBetweenTags) {
-      tagChecker(nestedBetweenTags);
-    }
-  }
-
-  if (!matchCorrect) {
-    if (matchesMissingOpeningTag) {
-      console.log(
-        `Expected # found </${matchesMissingOpeningTag?.groups?.closingTag}>`,
-      );
-      return;
-    }
-
-    if (matchesMissingClosingTag) {
-      console.log(
-        `Expected </${matchesMissingClosingTag?.groups?.openingTag}> found #`,
-      );
-      return;
-    }
+    console.log('Correctly tagged paragraph');
   }
 };
 
-// const htmlText1 = `<A></A><B></B>`;
-// const htmlText2 = `<A><B><C></C></B></A>`;
+const input1 = 'The following text<C><B>is centred and in boldface</B></C>';
+const input2 =
+  '<B>This <\\g>is <B>boldface</B> in <<*> a</B> <\\6> <<d>sentence';
+const input3 =
+  '<B><C> This should be centred and in boldface, but the tags are wrongly nested </B></C>';
+const input4 =
+  '<B>This should be in boldface, but there is an extra closing tag</B></C>';
+const input5 =
+  '<B><C>This should be centred and in boldface, but there is a missing closing tag</C>';
+const input6 = '<A></A><B></B>';
+const input7 = '<A><B><C></C></B></A>';
 
-// const sample1 = `The following text<C><B>is centred and in boldface</B></C>`;
-// const sample2 = `<B>This <\g>is <B>boldface</B> in <<*> a</B> <\6> <<d>sentence`;
-//const sample3 = `<B><C> This should be centred and in boldface, but the tags are wrongly nested </B></C>`;
-// const sample4 = `<B>This should be in boldface, but there is an extra closing tag</B></C>`;
-const sample5 = `<B><C>This should be centred and in boldface, but there is a missing closing tag</C>`;
-
-tagChecker(sample5);
-// tagChecker(sample5);
+tagChecker(input1);
+tagChecker(input2);
+tagChecker(input3);
+tagChecker(input4);
+tagChecker(input5);
+tagChecker(input6);
+tagChecker(input6);
+tagChecker(input7);
