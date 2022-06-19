@@ -6,7 +6,7 @@
   "author": "Olesia",
   "license": "MIT",
   "scripts": {
-    "tagChecker": "ts-node src/tagChecker.ts",
+    "tagChecker": "ts-node scripts/runTagChecker.ts",
     "test": "jest --config ./jest.config.js --no-cache --silent",
     "lint": "eslint -c .eslintrc.json --ignore-path .eslintignore --fix"
   },

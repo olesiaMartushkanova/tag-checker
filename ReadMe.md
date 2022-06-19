@@ -36,6 +36,16 @@ Run tag checker programm
   yarn programm
 ```
 
+### Add own input to tag checker
+
+Go to
+
+```bash
+  cd tag-checker/scripts/runTagChecker.ts
+```
+
+Add own input when calling `tagChecker(yourInputHere);` function
+
 ## Running Tests
 
 To run tests, run the following command
