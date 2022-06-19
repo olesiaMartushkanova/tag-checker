@@ -3,7 +3,7 @@ export const stripTag = (tag: string) => tag?.replaceAll(/[<>\\/]/g, '');
 export const isSameTag = (leftTag: string, rightTag: string) =>
   stripTag(leftTag) === stripTag(rightTag);
 
-export const isClosingTag = (tag: string) => tag && tag.includes('/');
+export const isClosingTag = (tag: string) => tag.includes('/');
 
 export const splitTagsInHalf = (tags: string[]) => {
   const closingTagCount = tags.filter(isClosingTag).length;
@@ -22,13 +22,17 @@ export const cleanTerminatedTags = (html: string) => {
 
   if (tags) {
     let tagsStr = tags.join();
+
     const openCloseTagPair = tagsStr.match(/(<[A-Z]{1}>),(<\/[A-Z]{1}>)/g);
+
     openCloseTagPair?.forEach((tagsPair) => {
       const tagPairArr = tagsPair.split(',');
+
       if (isSameTag(tagPairArr?.[0], tagPairArr?.[1])) {
         tagsStr = tagsStr.replace(tagsPair, '');
       }
     });
+
     return tagsStr.match(tagsRegexp) || [];
   }
   return null;
