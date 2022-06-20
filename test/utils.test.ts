@@ -9,9 +9,9 @@ import {
 describe.each([
   ['<A>', '</A>', true],
   ['<A>', '</C>', false],
-])('isSameTag', (leftTag, rightTag, expected) => {
-  it(`returns ${expected} if leftTag is ${leftTag} and rightTag is${rightTag}`, () => {
-    const result = isSameTag(leftTag, rightTag);
+])('isSameTag', (openingTag, closingTag, expected) => {
+  it(`returns ${expected} if openingTag is ${openingTag} and closingTag is${closingTag}`, () => {
+    const result = isSameTag(openingTag, closingTag);
 
     expect(result).toBe(expected);
   });
@@ -42,12 +42,12 @@ describe.each([
 describe('splitTagsArrInHalf', () => {
   it('splits array of tags in half correctly', () => {
     const tags = ['<A>', '</A>', '<B>', '</B>'];
-    const expectedRightTags = ['<B>', '</B>'];
-    const expectedLeftTags = ['<A>', '</A>'];
-    const { rightTags, leftTags } = splitTagsArrInHalf(tags);
+    const expectedclosingTags = ['<B>', '</B>'];
+    const expectedopeningTags = ['<A>', '</A>'];
+    const { closingTags, openingTags } = splitTagsArrInHalf(tags);
 
-    expect(rightTags).toEqual(expect.arrayContaining(expectedRightTags));
-    expect(leftTags).toEqual(expect.arrayContaining(expectedLeftTags));
+    expect(closingTags).toEqual(expect.arrayContaining(expectedclosingTags));
+    expect(openingTags).toEqual(expect.arrayContaining(expectedopeningTags));
   });
 });
 
@@ -55,9 +55,9 @@ describe('cleanTerminatedTags', () => {
   it('cleans terminated tags correctly', () => {
     const html = 'The following text<C><B>is centred and in boldface</B></C>';
 
-    const expectedRightTags = ['<C>', '</C>'];
+    const expectedclosingTags = ['<C>', '</C>'];
 
     const result = cleanTerminatedTags(html);
-    expect(result).toEqual(expect.arrayContaining(expectedRightTags));
+    expect(result).toEqual(expect.arrayContaining(expectedclosingTags));
   });
 });

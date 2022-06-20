@@ -10,34 +10,38 @@ export const tagChecker = (html: string) => {
   const mixedTags = cleanTerminatedTags(html);
 
   if (mixedTags) {
-    const { leftTags, rightTags } = splitTagsArrInHalf(mixedTags);
+    const { openingTags, closingTags } = splitTagsArrInHalf(mixedTags);
 
-    for (let i = 0; i < Math.max(leftTags.length, rightTags.length); i++) {
-      const leftTag = leftTags?.[i];
-      const rightTag = rightTags?.[i];
+    for (let i = 0; i < Math.max(openingTags.length, closingTags.length); i++) {
+      const openingTag = openingTags?.[i];
+      const closingTag = closingTags?.[i];
 
-      if (!leftTag && rightTag) {
-        console.log(`Expected # found ${rightTag}`);
+      if (!openingTag && closingTag) {
+        console.log(`Expected # found ${closingTag}`);
         return;
       }
 
-      if (leftTag && !rightTag) {
-        console.log(`Expected </${stripTag(leftTag)}> found #`);
+      if (openingTag && !closingTag) {
+        console.log(`Expected </${stripTag(openingTag)}> found #`);
         return;
       }
 
-      if (isSameTag(leftTag, rightTag) && isClosingTag(leftTag)) {
-        console.log(`Expected <${stripTag(leftTag)}> found ${leftTag}`);
-        return;
+      if (isSameTag(openingTag, closingTag)) {
+        if (isClosingTag(openingTag)) {
+          console.log(`Expected <${stripTag(openingTag)}> found ${openingTag}`);
+          return;
+        }
+
+        if (!isClosingTag(closingTag)) {
+          console.log(
+            `Expected </${stripTag(closingTag)}> found ${closingTag}`,
+          );
+          return;
+        }
       }
 
-      if (isSameTag(leftTag, rightTag) && !isClosingTag(rightTag)) {
-        console.log(`Expected </${stripTag(rightTag)}> found ${rightTag}`);
-        return;
-      }
-
-      if (!isSameTag(leftTag, rightTag)) {
-        console.log(`Expected </${stripTag(leftTag)}> found ${rightTag}`);
+      if (!isSameTag(openingTag, closingTag)) {
+        console.log(`Expected </${stripTag(openingTag)}> found ${closingTag}`);
         return;
       }
     }
